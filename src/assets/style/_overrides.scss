@@ -1,0 +1,20 @@
+body {
+  padding-top: $navbar-height;
+}
+
+.vertical-line {
+  border-left: 10px solid $primary;
+}
+
+.taginput-container {
+  padding-right: 0px !important;
+}
+
+.site-text a:link {
+  color: $site-color;
+  text-decoration: underline;
+}
+
+.site-text a:hover {
+  color: $primary;
+}
