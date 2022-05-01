@@ -7,17 +7,20 @@
     </template>
 
     <b-tabs >
-      <b-tab-item label="Ocurrencias">
+      <b-tab-item label="Registro de presencias">
 
           <b-field>
-            <div class="control has-icons-left" style="max-width: 300px;">
-              <input class="input" type="search" placeholder="Filtrar">
-              <span class="icon is-left">
-                <font-awesome :icon="['fas', 'search']"/>
-              </span>
-            </div>
-            <b-button type="is-primary">Aplicar</b-button>
-            <b-button icon-right="trash" />
+            <b-autocomplete style="width: 50%;"
+              :data="searchAutoData"
+              v-model="name"
+              icon="search"
+              placeholder="Nombre científico"
+              field="scientificName"
+              @typing="getSpeciesSuggestions"
+            >
+            </b-autocomplete>
+            <b-button type="is-primary" @click="loadGbifOccurrences()">Aplicar</b-button>
+            <b-button icon-right="trash" @click="name=''; loadGbifOccurrences(1)"/>
           </b-field>
         </div>
 
@@ -30,22 +33,23 @@
           backend-pagination
           :total='total'
           @click='rowClick'
-          @page-change='onPageChange'>
-            <b-table-column width="50%" field="scientificName" label="Nombre científico" v-slot="props">
-              {{ props.row.scientificName }}
-            </b-table-column>
-            <b-table-column field="year" label="Año" v-slot="props">
-              {{ props.row.year }}
-            </b-table-column>
-            <b-table-column field="publishingCountry" label="Pais de publicación" v-slot="props">
-              {{ props.row.publishingCountry }}
-            </b-table-column>
-            <b-table-column field="datasetName" label="Conjunto de datos" v-slot="props">
-              <a :href="'https://gbif.org/es/dataset/' + props.row.datasetKey">{{props.row.datasetName}}</a>
-            </b-table-column>
+          @page-change='onPageChange'
+        >
+          <b-table-column width="50%" field="scientificName" label="Nombre científico" v-slot="props">
+            {{ props.row.scientificName }}
+          </b-table-column>
+          <b-table-column field="year" label="Año" v-slot="props">
+            {{ props.row.year }}
+          </b-table-column>
+          <b-table-column field="publishingCountry" label="Pais que publica" v-slot="props">
+            {{ props.row.publishingCountry }}
+          </b-table-column>
+          <b-table-column field="datasetName" label="Conjunto de datos" v-slot="props">
+            <a :href="'https://gbif.org/es/dataset/' + props.row.datasetKey">{{props.row.datasetName}}</a>
+          </b-table-column>
         </b-table>
       </b-tab-item>
-      <b-tab-item label="Conjuntos de datos">
+      <b-tab-item label="Juegos de datos">
           Lorem <br>
           ipsum <br>
           dolor <br>
@@ -58,7 +62,7 @@
 </template>
 
 <script>
-import {getGbifOccurrences} from '~/utils/data'
+import {getGbifOccurrences, getSpeciesSuggestions} from '~/utils/data'
 
 export default {
   metaInfo: {
@@ -67,6 +71,8 @@ export default {
   data() {
     return {
       data: [],
+      searchAutoData: [],
+      name: '',
       total: 0,
       loading: false,
       page: 1,
@@ -82,7 +88,7 @@ export default {
   methods: {
     loadGbifOccurrences(page) {
     this.loading = true
-      getGbifOccurrences((page-1)*20).then((result) => {
+      getGbifOccurrences((page-1)*20, this.name).then((result) => {
         this.data = result.data.results
         this.total = result.data.count
         this.loading = false
@@ -90,13 +96,17 @@ export default {
       })
     },
     onPageChange(page) {
-      console.log('this is page ', page)
       this.page = page
       this.loadGbifOccurrences(page)
     },
     rowClick(row) {
-      console.log(row.gbifID)
       window.location.href=('https://gbif.org/es/occurrence/' + row.gbifID)
+    },
+    getSpeciesSuggestions(name) {
+      getSpeciesSuggestions(name).then((result) => {
+        this.searchAutoData = result.data
+        //console.log(result)
+      })
     }
   }
 }
