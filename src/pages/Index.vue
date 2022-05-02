@@ -13,7 +13,7 @@
             <b-autocomplete style="width: 50%;"
               :data="searchAutoData"
               v-model="name"
-              icon="search"
+              icon="filter"
               placeholder="Nombre científico"
               field="scientificName"
               @typing="getSpeciesSuggestions"
@@ -24,16 +24,16 @@
           </b-field>
         </div>
 
-        <b-table
-          :data='data'
+        <b-table style="cursor: pointer;"
+          :data='gbifOccurrencesData'
           :loading='loading'
           hoverable
           paginated
           :pagination-simple='true'
           backend-pagination
-          :total='total'
-          @click='rowClick'
-          @page-change='onPageChange'
+          :total='totalGbifOccurrences'
+          @click='gbifOccurrencesRowClick'
+          @page-change='gbifOccurrencesOnPageChange'
         >
           <b-table-column width="50%" field="scientificName" label="Nombre científico" v-slot="props">
             {{ props.row.scientificName }}
@@ -50,11 +50,24 @@
         </b-table>
       </b-tab-item>
       <b-tab-item label="Juegos de datos">
-          Lorem <br>
-          ipsum <br>
-          dolor <br>
-          sit <br>
-          amet.
+        <b-table style="cursor: pointer;"
+          :data='gbifDatasetsData'
+          :loading='loading'
+          hoverable
+          paginated
+          :pagination-simple='true'
+          backend-pagination
+          :total='totalGbifDatasets'
+          @click='gbifDatasetsRowClick'
+          @page-change='gbifDatasetsOnPageChange'
+        >
+          <b-table-column width="50%" field="title" label="Título" v-slot="props">
+            {{ props.row.title }}
+          </b-table-column>
+          <b-table-column field="publishingOrganizationTitle" label="Organización" v-slot="props">
+            {{ props.row.publishingOrganizationTitle }}
+          </b-table-column>
+        </b-table>
       </b-tab-item>
     </b-tabs>
 
@@ -62,25 +75,29 @@
 </template>
 
 <script>
-import {getGbifOccurrences, getSpeciesSuggestions} from '~/utils/data'
+import {getGbifOccurrences, getSpeciesSuggestions, getGbifDatasets} from '~/utils/data'
 
 export default {
   metaInfo: {
-    title: 'Hello, world!'
+    title: 'Prototipo GBIF'
   },
   data() {
     return {
-      data: [],
+      gbifOccurrencesData: [],
+      gbifDatasetsData: [],
       searchAutoData: [],
       name: '',
-      total: 0,
+      totalGbifOccurrences: 0,
+      totalGbifDatasets: 0,
       loading: false,
-      page: 1,
+      gbifOccurrencesPage: 1,
+      gbifDatasetsPage: 1,
       perPage: 20
     }
   },
   mounted() {
     this.loadGbifOccurrences()
+    this.loadGbifDatasets()
     /*getGbifOccurrences().then((result) => {
       console.log(result)
     }) */
@@ -89,23 +106,37 @@ export default {
     loadGbifOccurrences(page) {
     this.loading = true
       getGbifOccurrences((page-1)*20, this.name).then((result) => {
-        this.data = result.data.results
-        this.total = result.data.count
+        this.gbifOccurrencesData = result.data.results
+        this.totalGbifOccurrences = result.data.count
+        this.loading = false
+      })
+    },
+    gbifOccurrencesOnPageChange(page) {
+      this.gbifOccurrencesPage = page
+      this.loadGbifOccurrences(page)
+    },
+    gbifOccurrencesRowClick(row) {
+      window.location.href=('https://gbif.org/es/occurrence/' + row.gbifID)
+    },
+    loadGbifDatasets(page) {
+    this.loading = true
+      getGbifDatasets((page-1)*20, this.name).then((result) => {
+        this.gbifDatasetsData = result.data.results
+        this.totalGbifDatasets = result.data.count
         this.loading = false
         console.log(result)
       })
     },
-    onPageChange(page) {
-      this.page = page
-      this.loadGbifOccurrences(page)
+    gbifDatasetsOnPageChange(page) {
+      this.gbifDatasetsPage = page
+      this.loadGbifDatasets(page)
     },
-    rowClick(row) {
-      window.location.href=('https://gbif.org/es/occurrence/' + row.gbifID)
+    gbifDatasetsRowClick(row) {
+      window.location.href=('https://gbif.org/es/dataset/' + row.key)
     },
     getSpeciesSuggestions(name) {
       getSpeciesSuggestions(name).then((result) => {
         this.searchAutoData = result.data
-        //console.log(result)
       })
     }
   }

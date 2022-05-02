@@ -1,7 +1,11 @@
 <template>
   <Layout>
-    <h1>About us</h1>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error doloremque omnis animi, eligendi magni a voluptatum, vitae, consequuntur rerum illum odit fugit assumenda rem dolores inventore iste reprehenderit maxime! Iusto.</p>
+    <template slot="banner">
+      <h1 class="title is-uppercase has-text-centered">
+        ACERCA DE
+      </h1>
+    </template>
+    <p>Prototipo de acceso de datos relacionados con Venezuela alojados en la <a href="https://www.gbif.org/es/">Infraestructura Mundial de Información en Biodiversidad (GBIF)</a>.</p>
   </Layout>
 </template>
 

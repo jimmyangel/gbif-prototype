@@ -2,8 +2,15 @@
   <div>
     <b-navbar :fixed-top="true">
       <template slot="brand">
-        <b-navbar-item class="has-text-centered">
-          <b>PROTOTIPO<br>GBIF</b>
+        <b-navbar-item style="background-color: #c8c19f;" class="has-text-centered">
+          <g-link to="/">
+            <b>PROTOTIPO<br>GBIF</b>
+          </g-link>
+        </b-navbar-item>
+      </template>
+      <template slot="end">
+        <b-navbar-item tag="g-link" to="/about">
+          Acerca De
         </b-navbar-item>
       </template>
     </b-navbar>
@@ -19,6 +26,15 @@
         <slot />
       </section>
     </transition>
+    <section>
+      <footer class="footer">
+        <div class="has-text-centered">
+          <div class="footer-text" style="color: white;">
+          Este sitio es solamente un prototipo. v0.0.1.
+          </div>
+        </div>
+      </footer>
+    </section>
   </div>
 </template>
 
