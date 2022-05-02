@@ -13,6 +13,7 @@ export async function getSpeciesSuggestions(pre) {
 }
 
 export async function getGbifDatasets(offset) {
-  let response = await axios.get('https://api.gbif.org/v1/dataset/search?publishingCountry=VE&offset=' + offset)
+  let response = await axios.get('https://api.gbif.org/v1/dataset/search?publishingCountry=VE&offset=' + offset,
+    {headers: {'Accept-Language': 'es; 0.9, en; 0.8'}})
   return response
 }

@@ -8,22 +8,20 @@
 
     <b-tabs >
       <b-tab-item label="Registro de presencias">
-
-          <b-field>
-            <b-autocomplete style="width: 50%;"
-              :data="searchAutoData"
-              v-model="name"
-              icon="filter"
-              placeholder="Nombre científico"
-              field="scientificName"
-              @typing="getSpeciesSuggestions"
-            >
-            </b-autocomplete>
-            <b-button type="is-primary" @click="loadGbifOccurrences()">Aplicar</b-button>
-            <b-button icon-right="trash" @click="name=''; loadGbifOccurrences(1)"/>
-          </b-field>
-        </div>
-
+        <h4 class="title is-4 has-text-centered">Registros de presencia de especies en Venezuela</h4>
+        <b-field>
+          <b-autocomplete style="width: 50%;"
+            :data="searchAutoData"
+            v-model="name"
+            icon="filter"
+            placeholder="Nombre científico"
+            field="scientificName"
+            @typing="getSpeciesSuggestions"
+          >
+          </b-autocomplete>
+          <b-button type="is-primary" @click="loadGbifOccurrences()">Aplicar</b-button>
+          <b-button icon-right="trash" @click="name=''; loadGbifOccurrences(1)"/>
+        </b-field>
         <b-table style="cursor: pointer;"
           :data='gbifOccurrencesData'
           :loading='loading'
@@ -50,6 +48,7 @@
         </b-table>
       </b-tab-item>
       <b-tab-item label="Juegos de datos">
+        <h4 class="title is-4 has-text-centered">Juegos de datos publicados en Venezuela</h4>
         <b-table style="cursor: pointer;"
           :data='gbifDatasetsData'
           :loading='loading'
@@ -124,7 +123,6 @@ export default {
         this.gbifDatasetsData = result.data.results
         this.totalGbifDatasets = result.data.count
         this.loading = false
-        console.log(result)
       })
     },
     gbifDatasetsOnPageChange(page) {
