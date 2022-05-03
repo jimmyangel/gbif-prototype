@@ -10,7 +10,7 @@
       <b-tab-item label="Registro de presencias">
         <h4 class="title is-4 has-text-centered">Registros de presencia de especies en Venezuela</h4>
         <b-field>
-          <b-autocomplete style="width: 50%;"
+          <b-autocomplete style="width: 30%;"
             :data="searchAutoData"
             v-model="name"
             icon="filter"
@@ -19,8 +19,18 @@
             @typing="getSpeciesSuggestions"
           >
           </b-autocomplete>
+          <b-field>
+            <b-taginput
+              v-model="tags"
+              :data="codes"
+              autocomplete
+              :open-on-focus="true"
+              placeholder="IUCN"
+            >
+            </b-taginput>
+          </b-field>
           <b-button type="is-primary" @click="loadGbifOccurrences()">Aplicar</b-button>
-          <b-button icon-right="trash" @click="name=''; loadGbifOccurrences(1)"/>
+          <b-button icon-right="trash" @click="name=''; tags=[]; loadGbifOccurrences(1)"/>
         </b-field>
         <b-table style="cursor: pointer;"
           :data='gbifOccurrencesData'
@@ -33,13 +43,16 @@
           @click='gbifOccurrencesRowClick'
           @page-change='gbifOccurrencesOnPageChange'
         >
-          <b-table-column width="50%" field="scientificName" label="Nombre científico" v-slot="props">
+          <b-table-column width="30%" field="scientificName" label="Nombre científico" v-slot="props">
             {{ props.row.scientificName }}
           </b-table-column>
           <b-table-column field="year" label="Año" v-slot="props">
             {{ props.row.year }}
           </b-table-column>
-          <b-table-column field="publishingCountry" label="Pais que publica" v-slot="props">
+          <b-table-column field="iucnRedListCategory" label="Lista roja IUCN" v-slot="props">
+            {{props.row.iucnRedListCategory}} - {{ iucnCodes[props.row.iucnRedListCategory] }}
+          </b-table-column>
+          <b-table-column field="publishingCountry" label="País que publica" v-slot="props">
             {{ props.row.publishingCountry }}
           </b-table-column>
           <b-table-column field="datasetName" label="Conjunto de datos" v-slot="props">
@@ -73,6 +86,11 @@
   </Layout>
 </template>
 
+
+<style>
+
+</style>
+
 <script>
 import {getGbifOccurrences, getSpeciesSuggestions, getGbifDatasets} from '~/utils/data'
 
@@ -91,7 +109,21 @@ export default {
       loading: false,
       gbifOccurrencesPage: 1,
       gbifDatasetsPage: 1,
-      perPage: 20
+      perPage: 20,
+      tags: [],
+      codes: ['EX', 'EW', 'CR', 'EN', 'VU', 'NT', 'LC', 'DD', 'NE'],
+      iucnCodes: {
+        EX: 'Extinto',
+        EW: 'Extinto',
+        CR: 'En peligro crítico',
+        EN: 'En peligro',
+        VU: 'Vulnerable',
+        NT: 'Casi amenazado',
+        LC: 'Preocupación menor',
+        DD: 'Datos insuficientes',
+        NE: 'No evaluado'
+      },
+      selectedOptions: []
     }
   },
   mounted() {
@@ -103,8 +135,9 @@ export default {
   },
   methods: {
     loadGbifOccurrences(page) {
-    this.loading = true
-      getGbifOccurrences((page-1)*20, this.name).then((result) => {
+      this.loading = true
+      console.log(this.tags)
+      getGbifOccurrences((page-1)*20, this.name, this.tags).then((result) => {
         this.gbifOccurrencesData = result.data.results
         this.totalGbifOccurrences = result.data.count
         this.loading = false
@@ -118,8 +151,8 @@ export default {
       window.location.href=('https://gbif.org/es/occurrence/' + row.gbifID)
     },
     loadGbifDatasets(page) {
-    this.loading = true
-      getGbifDatasets((page-1)*20, this.name).then((result) => {
+      this.loading = true
+      getGbifDatasets((page-1)*20).then((result) => {
         this.gbifDatasetsData = result.data.results
         this.totalGbifDatasets = result.data.count
         this.loading = false
@@ -140,7 +173,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>
