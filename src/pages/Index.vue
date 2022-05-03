@@ -136,7 +136,6 @@ export default {
   methods: {
     loadGbifOccurrences(page) {
       this.loading = true
-      console.log(this.tags)
       getGbifOccurrences((page-1)*20, this.name, this.tags).then((result) => {
         this.gbifOccurrencesData = result.data.results
         this.totalGbifOccurrences = result.data.count
