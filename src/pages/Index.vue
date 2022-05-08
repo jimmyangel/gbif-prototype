@@ -84,6 +84,7 @@
               <div>Fuera de <br>rango geográfico</div>
             </template>
             <template v-slot="props">
+              <span v-if="props.row.outOfRange === undefined"><font-awesome class="fa-spin" :icon="['fas', 'spinner']"/></span>
               <span v-if="props.row.outOfRange"><font-awesome style="color: #ff8c00;" :icon="['fas', 'exclamation-triangle']"/></span>
             </template>
           </b-table-column>
