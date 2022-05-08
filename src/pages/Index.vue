@@ -79,6 +79,14 @@
           <b-table-column field="publishingOrganizationTitle" label="Organización" v-slot="props">
             {{ props.row.publishingOrganizationTitle }}
           </b-table-column>
+          <b-table-column class="has-text-centered" field="geo">
+            <template v-slot:header="{ column }">
+              <div>Fuera de <br>rango geográfico</div>
+            </template>
+            <template v-slot="props">
+              <span v-if="props.row.outOfRange"><font-awesome style="color: #ff8c00;" :icon="['fas', 'exclamation-triangle']"/></span>
+            </template>
+          </b-table-column>
         </b-table>
       </b-tab-item>
     </b-tabs>
@@ -92,7 +100,7 @@
 </style>
 
 <script>
-import {getGbifOccurrences, getSpeciesSuggestions, getGbifDatasets} from '~/utils/data'
+import {getGbifOccurrences, getSpeciesSuggestions, getGbifDatasets, getGbifDatasetDetail} from '~/utils/data'
 
 export default {
   metaInfo: {
@@ -135,11 +143,11 @@ export default {
   },
   methods: {
     loadGbifOccurrences(page) {
-      this.loading = true
+      //this.loading = true
       getGbifOccurrences((page-1)*20, this.name, this.tags).then((result) => {
         this.gbifOccurrencesData = result.data.results
         this.totalGbifOccurrences = result.data.count
-        this.loading = false
+        //this.loading = false
       })
     },
     gbifOccurrencesOnPageChange(page) {
@@ -155,6 +163,13 @@ export default {
         this.gbifDatasetsData = result.data.results
         this.totalGbifDatasets = result.data.count
         this.loading = false
+        this.gbifDatasetsData.forEach((ds, idx) => {
+          getGbifDatasetDetail(ds.key).then((dataset) => {
+            let gDS = this.gbifDatasetsData[idx]
+            gDS.outOfRange = this.isGeoOutOfRange(dataset.data.geographicCoverages)
+            this.$set(this.gbifDatasetsData, idx, gDS)
+          })
+        })
       })
     },
     gbifDatasetsOnPageChange(page) {
@@ -163,11 +178,18 @@ export default {
     },
     gbifDatasetsRowClick(row) {
       window.location.href=('https://gbif.org/es/dataset/' + row.key)
+      //console.log(row)
     },
     getSpeciesSuggestions(name) {
       getSpeciesSuggestions(name).then((result) => {
         this.searchAutoData = result.data
       })
+    },
+    isGeoOutOfRange(geo) {
+      for (let i=0; i<geo.length; i++) {
+        return (geo[i].boundingBox.minLongitude > -59.57 || geo[i].boundingBox.maxLongitude < -73.036 || geo[i].boundingBox.maxLatitude < 0.72 || geo[i].boundingBox.minLatitude > 12.17)
+      }
+      return false
     }
   }
 }

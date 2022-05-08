@@ -21,3 +21,8 @@ export async function getGbifDatasets(offset) {
     {headers: {'Accept-Language': 'es; 0.9, en; 0.8'}})
   return response
 }
+
+export async function getGbifDatasetDetail(key) {
+  let dataset =  await axios.get('https://api.gbif.org/v1/dataset/' + key)
+  return dataset
+}
