@@ -10,6 +10,7 @@
     "axios": "^0.21.1",
     "buefy": "^0.9.20",
     "gridsome": "^0.7.23",
+    "maplibre-gl": "^2.1.9",
     "vuex": "^3.6.2"
   },
   "devDependencies": {

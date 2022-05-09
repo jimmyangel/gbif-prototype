@@ -88,6 +88,11 @@
           </b-table-column>
         </b-table>
       </b-tab-item>
+      <b-tab-item value="map" label="Mapa">
+        <div class="columns is-gapless">
+          <InteractiveMap class="column" :isMapVisible="isMapVisible"/>
+        </div>
+      </b-tab-item>
     </b-tabs>
 
   </Layout>
@@ -101,6 +106,8 @@
 <script>
 import {getGbifOccurrences, getSpeciesSuggestions, getGbifDatasets, getGbifDatasetDetail} from '~/utils/data'
 
+import InteractiveMap from '~/components/InteractiveMap.vue'
+
 export default {
   metaInfo: {
     title: 'Prototipo GBIF'
@@ -110,6 +117,7 @@ export default {
       gbifOccurrencesData: [],
       gbifDatasetsData: [],
       activeTab: 'occurrences',
+      isMapVisible: false,
       searchAutoData: [],
       name: '',
       totalGbifOccurrences: 0,
@@ -133,6 +141,9 @@ export default {
       },
       selectedOptions: []
     }
+  },
+  components: {
+    InteractiveMap
   },
   mounted() {
     this.loadGbifOccurrences()
@@ -183,6 +194,9 @@ export default {
     },
     tabChanged() {
       if (this.activeTab === 'datasets' && this.gbifDatasetsData.length === 0) this.loadGbifDatasets()
+
+      if (this.activeTab === 'map') this.isMapVisible = true
+      else this.isMapVisible = false
     }
   }
 }
