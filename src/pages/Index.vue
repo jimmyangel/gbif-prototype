@@ -88,9 +88,9 @@
           </b-table-column>
         </b-table>
       </b-tab-item>
-      <b-tab-item value="map" label="Mapa">
+      <b-tab-item value="map" label="Mapa de presencias">
         <div class="columns is-gapless">
-          <InteractiveMap class="column" :isMapVisible="isMapVisible"/>
+          <InteractiveMap class="column"/>
         </div>
       </b-tab-item>
     </b-tabs>
@@ -195,8 +195,9 @@ export default {
     tabChanged() {
       if (this.activeTab === 'datasets' && this.gbifDatasetsData.length === 0) this.loadGbifDatasets()
 
-      if (this.activeTab === 'map') this.isMapVisible = true
-      else this.isMapVisible = false
+      if (this.activeTab === 'map') {
+        this.$nextTick(() => window.dispatchEvent(new Event('resize')))
+      }
     }
   }
 }

@@ -26,7 +26,7 @@ export const mapConfig = {
         uri:'/mapstyles/satellite.json'
     }
   ],
-  mapCenter: [-66.58, 6.42],
+  mapCenter: [-66.58, 8.42],
   mapZoom: 5,
   maxBounds: [[-82, -3], [-54, 20]],
   maxZoom: 14,

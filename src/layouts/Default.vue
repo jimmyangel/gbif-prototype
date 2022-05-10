@@ -30,7 +30,7 @@
       <footer class="footer">
         <div class="has-text-centered">
           <div class="footer-text" style="color: white;">
-          Este sitio es solamente un prototipo. v0.0.2.
+          Este sitio es solamente un prototipo. v0.0.3.
           </div>
         </div>
       </footer>
