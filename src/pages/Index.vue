@@ -60,7 +60,7 @@
         </b-table>
       </b-tab-item>
       <b-tab-item value="datasets" label="Juegos de datos">
-        <h4 class="title is-4 has-text-centered">Juegos de datos publicados en Venezuela</h4>
+        <h4 class="title is-4 has-text-centered">Juegos de datos publicados de Venezuela</h4>
         <b-table style="cursor: pointer;"
           :data='gbifDatasetsData'
           :loading='loading'
@@ -73,6 +73,9 @@
         >
           <b-table-column width="50%" field="title" label="Título" v-slot="props">
             <a :href="'https://gbif.org/es/dataset/' + props.row.key">{{ props.row.title }}</a>
+          </b-table-column>
+          <b-table-column field="type" label="Tipo" v-slot="props">
+            {{ datasetTypes[props.row.type] }}
           </b-table-column>
           <b-table-column field="publishingOrganizationTitle" label="Organización" v-slot="props">
             {{ props.row.publishingOrganizationTitle }}
@@ -138,6 +141,13 @@ export default {
         LC: 'Preocupación menor',
         DD: 'Datos insuficientes',
         NE: 'No evaluado'
+      },
+      datasetTypes: {
+        OCCURRENCE: 'Registro',
+        CHECKLIST: 'Lista de especies',
+        SAMPLING_EVENT: 'Evento de muestreo',
+        METADATA: 'Metadatos',
+        undefined: 'Desconocido'
       },
       selectedOptions: []
     }
